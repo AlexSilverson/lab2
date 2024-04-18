@@ -1,1 +1,1 @@
-{"id":2,"name":"Stupino","country":"Russia","history":4,"resort":1}{"id":1,"name":"Moskow","country":"Russia","history":100,"resort":7}
+{"id":2,"name":"Stupino","country":"Russia","history":4,"resort":1}{"id":1,"name":"Moskow","country":"Russia","history":100,"resort":7}{"id":4,"name":"Paris","country":"France","history":0,"resort":0}

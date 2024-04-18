@@ -32,9 +32,9 @@ func GetCityById(app *fiber.App, cityService services.CityService) fiber.Router 
 			return c.Status(fiber.StatusBadRequest).JSON("Id format is not valid")
 		}
 
-		city := cityService.GetCityById(uint(id))
-		if city == nil {
-			return c.Status(fiber.StatusNotFound).JSON("City not found")
+		city, er := cityService.GetCityById(uint(id))
+		if er != nil {
+			return c.Status(fiber.StatusNotFound).JSON(er)
 		}
 
 		return c.Status(fiber.StatusOK).JSON(city)
@@ -58,14 +58,24 @@ func AddCity(app *fiber.App, cityService services.CityService) fiber.Router {
 		var city entity.City
 
 		err := c.BodyParser(&city)
-
+		fmt.Print(cityService.GetCityById(city.ID))
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("City format is not valid")
 		}
+		_, er := cityService.GetCityById(city.ID)
+		fmt.Println("int contr", er)
+		if er != nil && er.Error() == "city not found" {
+			err = cityService.AddCity(city)
+			fmt.Println("after add", err)
+			if err == nil {
+				return c.Status(fiber.StatusOK).JSON("added")
+			} else {
+				return c.Status(fiber.StatusBadRequest).JSON(err)
+			}
+		}
 
-		createdCity := cityService.AddCity(city)
+		return c.Status(fiber.StatusBadRequest).JSON("That id is already used")
 
-		return c.Status(fiber.StatusOK).JSON(createdCity)
 	})
 }
 
@@ -90,10 +100,16 @@ func UpdateCity(app *fiber.App, cityService services.CityService) fiber.Router {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("City format is not valid")
 		}
+		_, er := cityService.GetCityById(city.ID)
 
-		createdCity := cityService.UpdateCity(city)
-
-		return c.Status(fiber.StatusOK).JSON(createdCity)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
+		}
+		er = cityService.UpdateCity(city)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
+		}
+		return c.Status(fiber.StatusOK).JSON("updated")
 	})
 }
 
@@ -127,16 +143,15 @@ func DeleteCity(app *fiber.App, cityService services.CityService) fiber.Router {
 		id, err := strconv.ParseInt(cityId, 10, 64)
 
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("Id format is not valid")
+			return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 		}
 		fmt.Println(id)
 
-		city := cityService.DeleteCity(uint(id))
-		fmt.Println("delete: ", id, " ", city)
-		if city == nil {
+		er := cityService.DeleteCity(uint(id))
+		if er != nil {
 			return c.Status(fiber.StatusNotFound).JSON("City not found")
 		}
 
-		return c.Status(fiber.StatusOK).JSON(city)
+		return c.Status(fiber.StatusOK).JSON("deleted")
 	})
 }

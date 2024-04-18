@@ -3,7 +3,6 @@ package main
 import (
 	_ "AlexSilverson/lab2/docs"
 	"AlexSilverson/lab2/src/City/controller"
-	"AlexSilverson/lab2/src/City/domain/persistance"
 	"AlexSilverson/lab2/src/City/domain/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,9 +20,7 @@ func main() {
 	app.Delete("/swagger/del/*", swagger.HandlerDefault)
 	file := "C:\\Lab2\\Storadges\\CityStorage.txt"
 
-	cityRepository := persistance.NewCityRepository(file)
-	cityRepository.DeleteCity(4)
-	cityServise := services.NewCityRepository(cityRepository)
+	cityServise := services.NewCitySevice(file)
 	//fmt.Print(cityRepository.GetCityById(2))
 	controller.GetCityById(app, cityServise)
 	controller.AddCity(app, cityServise)
