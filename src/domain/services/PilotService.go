@@ -1,32 +1,31 @@
 package services
 
 import (
-	"AlexSilverson/lab2/src/City/domain/entity"
+	"AlexSilverson/lab2/src/domain/entity"
 	"bufio"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 )
 
-type cityService struct {
+type pilotService struct {
 	fileRoute string
 }
 
-type CityService interface {
-	GetCityById(id uint) (*entity.City, error)
-	AddCity(city entity.City) error
-	UpdateCity(inputCity entity.City) error
-	DeleteCity(id uint) error
+type PilotService interface {
+	GetPilotById(id uint) (*entity.Pilot, error)
+	AddPilot(pilot entity.Pilot) error
+	UpdatePilot(inputPilot entity.Pilot) error
+	DeletePilot(id uint) error
 }
 
-func (r cityService) GetCityById(id uint) (*entity.City, error) {
-	var city entity.City
+func (r pilotService) GetPilotById(id uint) (*entity.Pilot, error) {
+	var pilot entity.Pilot
 
 	f, er := os.Open(r.fileRoute)
 
 	if er != nil {
-		return &city, er
+		return &pilot, er
 	}
 
 	defer f.Close()
@@ -34,18 +33,18 @@ func (r cityService) GetCityById(id uint) (*entity.City, error) {
 	decoder := json.NewDecoder(f)
 
 	for decoder.More() {
-		er = decoder.Decode(&city)
+		er = decoder.Decode(&pilot)
 		if er != nil {
-			return &city, er
+			return &pilot, er
 		}
-		if city.ID == id {
-			return &city, nil
+		if pilot.ID == id {
+			return &pilot, nil
 		}
 	}
-	return &city, errors.New("city not found")
+	return &pilot, errors.New("pilot not found")
 }
 
-func (r cityService) AddCity(city entity.City) error {
+func (r pilotService) AddPilot(pilot entity.Pilot) error {
 	f, er := os.OpenFile(r.fileRoute, os.O_WRONLY|os.O_APPEND, 0644)
 
 	if er != nil {
@@ -56,7 +55,7 @@ func (r cityService) AddCity(city entity.City) error {
 
 	w := bufio.NewWriter(f)
 
-	data, er := json.Marshal(city)
+	data, er := json.Marshal(pilot)
 
 	if er != nil {
 		return er
@@ -74,7 +73,7 @@ func (r cityService) AddCity(city entity.City) error {
 	return nil
 }
 
-func (r cityService) UpdateCity(inputCity entity.City) error {
+func (r pilotService) UpdatePilot(inputPilot entity.Pilot) error {
 	f, er := os.OpenFile(r.fileRoute, os.O_APPEND|os.O_RDWR, 0644)
 
 	if er != nil {
@@ -83,17 +82,17 @@ func (r cityService) UpdateCity(inputCity entity.City) error {
 
 	defer f.Close()
 
-	citis := make([]entity.City, 0)
+	pilots := make([]entity.Pilot, 0)
 
 	decoder := json.NewDecoder(f)
 
 	for decoder.More() {
-		var now entity.City
+		var now entity.Pilot
 		er = decoder.Decode(&now)
 		if er != nil {
 			return er
 		}
-		citis = append(citis, now)
+		pilots = append(pilots, now)
 	}
 
 	er = os.Truncate(r.fileRoute, 0)
@@ -101,25 +100,24 @@ func (r cityService) UpdateCity(inputCity entity.City) error {
 		return er
 	}
 	var flag bool = false
-	fmt.Println(citis)
-	for _, curCity := range citis {
-		if curCity.ID == inputCity.ID {
+	for _, curPilot := range pilots {
+		if curPilot.ID == inputPilot.ID {
 			flag = true
-			r.AddCity(inputCity)
+			r.AddPilot(inputPilot)
 
 		} else {
-			r.AddCity(curCity)
+			r.AddPilot(curPilot)
 		}
 	}
 
 	if flag {
 		return nil
 	} else {
-		return errors.New("that city not found")
+		return errors.New("that pilot not found")
 	}
 }
 
-func (r cityService) DeleteCity(id uint) error {
+func (r pilotService) DeletePilot(id uint) error {
 	f, er := os.OpenFile(r.fileRoute, os.O_APPEND|os.O_RDWR, 0644)
 
 	if er != nil {
@@ -128,34 +126,32 @@ func (r cityService) DeleteCity(id uint) error {
 
 	defer f.Close()
 
-	citis := make([]entity.City, 0)
+	pilots := make([]entity.Pilot, 0)
 
 	decoder := json.NewDecoder(f)
 
 	for decoder.More() {
-		var now entity.City
+		var now entity.Pilot
 		er = decoder.Decode(&now)
-		fmt.Println(now)
 		if er != nil {
 			return (er)
 		}
-		citis = append(citis, now)
+		pilots = append(pilots, now)
 	}
 
 	er = os.Truncate(r.fileRoute, 0)
 	if er != nil {
 		return er
 	}
-	fmt.Println(citis)
-	for _, curCity := range citis {
-		if curCity.ID != id {
-			r.AddCity(curCity)
+	for _, curPilot := range pilots {
+		if curPilot.ID != id {
+			r.AddPilot(curPilot)
 		}
 	}
 	return nil
 
 }
 
-func NewCitySevice(fileRoute string) CityService {
-	return &cityService{fileRoute: fileRoute}
+func NewPilotSevice(fileRoute string) PilotService {
+	return &pilotService{fileRoute: fileRoute}
 }

@@ -18,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/city": {
             "put": {
-                "description": "Getting City by Id in detail",
+                "description": "Updating City in detail",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,10 +28,10 @@ const docTemplate = `{
                 "tags": [
                     "Citis"
                 ],
-                "summary": "Getting City by Id",
+                "summary": "Updating City",
                 "parameters": [
                     {
-                        "description": "Request of Creating City Object",
+                        "description": "Request of Updating City Object",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -191,6 +191,358 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/flight": {
+            "put": {
+                "description": "Updating Flight in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Updating Flight",
+                "parameters": [
+                    {
+                        "description": "Request of Updating Flight Object",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Flight"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Getting Flight by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Getting Flight by Id",
+                "parameters": [
+                    {
+                        "description": "Request of Creating Flight Object",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Flight"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/flight/{id}": {
+            "get": {
+                "description": "Getting Flight by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Getting Flight by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of Flight",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletting Flight by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Deletting Flight by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of Flight",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pilot": {
+            "put": {
+                "description": "Updating Pilot in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pilots"
+                ],
+                "summary": "Updating Pilot",
+                "parameters": [
+                    {
+                        "description": "Request of Updating Pilot Object",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Pilot"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Getting Pilot by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pilots"
+                ],
+                "summary": "Getting Pilot by Id",
+                "parameters": [
+                    {
+                        "description": "Request of Creating Pilot Object",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.Pilot"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/pilot/{id}": {
+            "get": {
+                "description": "Getting Pilots by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pilots"
+                ],
+                "summary": "Getting Pilots by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of Pilot",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletting Pilot by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pilots"
+                ],
+                "summary": "Deletting Pilot by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of Pilot",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -211,6 +563,52 @@ const docTemplate = `{
                 },
                 "resort": {
                     "type": "integer"
+                }
+            }
+        },
+        "entity.Flight": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "pilot": {
+                    "type": "integer"
+                },
+                "starttime": {
+                    "type": "string"
+                },
+                "to": {
+                    "type": "integer"
+                },
+                "treveltime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.Pilot": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "experience": {
+                    "type": "integer"
+                },
+                "firstname": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastname": {
+                    "type": "string"
+                },
+                "secondname": {
+                    "type": "string"
                 }
             }
         }

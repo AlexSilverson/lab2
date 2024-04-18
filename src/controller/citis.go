@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"AlexSilverson/lab2/src/City/domain/entity"
-	"AlexSilverson/lab2/src/City/domain/services"
-	"fmt"
+	"AlexSilverson/lab2/src/domain/entity"
+	"AlexSilverson/lab2/src/domain/services"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,9 +21,7 @@ import (
 //	@Success		200				{string}	string
 //	@Router			/city/{id} [get]
 func GetCityById(app *fiber.App, cityService services.CityService) fiber.Router {
-
 	return app.Get("/city/:id", func(c *fiber.Ctx) error {
-		fmt.Print("here")
 		cityId := c.Params("id")
 		id, err := strconv.ParseInt(cityId, 10, 64)
 
@@ -41,7 +38,7 @@ func GetCityById(app *fiber.App, cityService services.CityService) fiber.Router 
 	})
 }
 
-// GetCityById Getting City by ID
+// PutCityById Getting City by json
 //
 //	@Summary		Getting City by Id
 //	@Description	Getting City by Id in detail
@@ -58,15 +55,12 @@ func AddCity(app *fiber.App, cityService services.CityService) fiber.Router {
 		var city entity.City
 
 		err := c.BodyParser(&city)
-		fmt.Print(cityService.GetCityById(city.ID))
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("City format is not valid")
 		}
 		_, er := cityService.GetCityById(city.ID)
-		fmt.Println("int contr", er)
 		if er != nil && er.Error() == "city not found" {
 			err = cityService.AddCity(city)
-			fmt.Println("after add", err)
 			if err == nil {
 				return c.Status(fiber.StatusOK).JSON("added")
 			} else {
@@ -79,14 +73,14 @@ func AddCity(app *fiber.App, cityService services.CityService) fiber.Router {
 	})
 }
 
-// GetCityById Getting City by ID
+// GetCityById Updating City
 //
-//	@Summary		Getting City by Id
-//	@Description	Getting City by Id in detail
+//	@Summary		Updating City
+//	@Description	Updating City in detail
 //	@Tags			Citis
 //	@Accept			json
 //	@Produce		json
-//	@Param			request			body		entity.City	true	"Request of Creating City Object"
+//	@Param			request			body		entity.City	true	"Request of Updating City Object"
 //	@Failure		400				{string}	string
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
@@ -138,14 +132,12 @@ func UpdateCity(app *fiber.App, cityService services.CityService) fiber.Router {
 func DeleteCity(app *fiber.App, cityService services.CityService) fiber.Router {
 
 	return app.Delete("/city/:id", func(c *fiber.Ctx) error {
-		fmt.Print("here")
 		cityId := c.Params("id")
 		id, err := strconv.ParseInt(cityId, 10, 64)
 
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(err.Error())
 		}
-		fmt.Println(id)
 
 		er := cityService.DeleteCity(uint(id))
 		if er != nil {

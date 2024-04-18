@@ -12,6 +12,36 @@ definitions:
       resort:
         type: integer
     type: object
+  entity.Flight:
+    properties:
+      from:
+        type: integer
+      id:
+        type: integer
+      pilot:
+        type: integer
+      starttime:
+        type: string
+      to:
+        type: integer
+      treveltime:
+        type: integer
+    type: object
+  entity.Pilot:
+    properties:
+      age:
+        type: integer
+      experience:
+        type: integer
+      firstname:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+      secondname:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a sample swagger for second RCSP lab
@@ -52,9 +82,9 @@ paths:
     put:
       consumes:
       - application/json
-      description: Getting City by Id in detail
+      description: Updating City in detail
       parameters:
-      - description: Request of Creating City Object
+      - description: Request of Updating City Object
         in: body
         name: request
         required: true
@@ -75,7 +105,7 @@ paths:
           description: Not Found
           schema:
             type: string
-      summary: Getting City by Id
+      summary: Updating City
       tags:
       - Citis
   /city/{id}:
@@ -135,4 +165,236 @@ paths:
       summary: Getting City by Id
       tags:
       - Citis
+  /flight:
+    post:
+      consumes:
+      - application/json
+      description: Getting Flight by Id in detail
+      parameters:
+      - description: Request of Creating Flight Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Flight'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting Flight by Id
+      tags:
+      - Flights
+    put:
+      consumes:
+      - application/json
+      description: Updating Flight in detail
+      parameters:
+      - description: Request of Updating Flight Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Flight'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Updating Flight
+      tags:
+      - Flights
+  /flight/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletting Flight by Id in detail
+      parameters:
+      - description: id of Flight
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Deletting Flight by Id
+      tags:
+      - Flights
+    get:
+      consumes:
+      - application/json
+      description: Getting Flight by Id in detail
+      parameters:
+      - description: id of Flight
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting Flight by Id
+      tags:
+      - Flights
+  /pilot:
+    post:
+      consumes:
+      - application/json
+      description: Getting Pilot by Id in detail
+      parameters:
+      - description: Request of Creating Pilot Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Pilot'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting Pilot by Id
+      tags:
+      - Pilots
+    put:
+      consumes:
+      - application/json
+      description: Updating Pilot in detail
+      parameters:
+      - description: Request of Updating Pilot Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.Pilot'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Updating Pilot
+      tags:
+      - Pilots
+  /pilot/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletting Pilot by Id in detail
+      parameters:
+      - description: id of Pilot
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Deletting Pilot by Id
+      tags:
+      - Pilots
+    get:
+      consumes:
+      - application/json
+      description: Getting Pilots by Id in detail
+      parameters:
+      - description: id of Pilot
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting Pilots by Id
+      tags:
+      - Pilots
 swagger: "2.0"
