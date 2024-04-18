@@ -1,0 +1,138 @@
+definitions:
+  entity.City:
+    properties:
+      country:
+        type: string
+      history:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      resort:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is a sample swagger for second RCSP lab
+  termsOfService: http://swagger.io/terms/
+  title: 2lab API
+  version: "1.0"
+paths:
+  /city:
+    post:
+      consumes:
+      - application/json
+      description: Getting City by Id in detail
+      parameters:
+      - description: Request of Creating City Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.City'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting City by Id
+      tags:
+      - Citis
+    put:
+      consumes:
+      - application/json
+      description: Getting City by Id in detail
+      parameters:
+      - description: Request of Creating City Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entity.City'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting City by Id
+      tags:
+      - Citis
+  /city/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletting City by Id in detail
+      parameters:
+      - description: id of City
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Deletting City by Id
+      tags:
+      - Citis
+    get:
+      consumes:
+      - application/json
+      description: Getting City by Id in detail
+      parameters:
+      - description: id of City
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting City by Id
+      tags:
+      - Citis
+swagger: "2.0"

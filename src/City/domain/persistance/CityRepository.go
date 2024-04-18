@@ -1,12 +1,11 @@
 package persistance
 
 import (
+	"AlexSilverson/lab2/src/City/domain/entity"
 	"bufio"
 	"encoding/json"
 	"fmt"
 	"os"
-
-	"github.com/AlexSilverson/secondLab/src/City/domain/entity"
 )
 
 type cityRepository struct {
@@ -147,23 +146,18 @@ func (r cityRepository) DeleteCity(id uint) *entity.City {
 	if er != nil {
 		panic(er)
 	}
-	var flag bool = false
 	fmt.Println(citis)
 	var delCity entity.City
 	for _, curCity := range citis {
 		if curCity.ID == id {
 			delCity = curCity
-			flag = true
 		} else {
 			r.AddCity(curCity)
 		}
 	}
 
-	if flag {
-		return &delCity
-	} else {
-		panic("that city wasnt found")
-	}
+	return &delCity
+
 }
 
 func NewCityRepository(fileRoute string) CityRepository {
