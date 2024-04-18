@@ -50,14 +50,28 @@ func GetFlightById(app *fiber.App, flightService services.FlightService) fiber.R
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
 //	@Router			/flight [post]
-func AddFlight(app *fiber.App, flightService services.FlightService) fiber.Router {
+func AddFlight(app *fiber.App, flightService services.FlightService, cityService services.CityService, pilotService services.PilotService) fiber.Router {
 	return app.Post("/flight", func(c *fiber.Ctx) error {
 		var flight entity.Flight
 		err := c.BodyParser(&flight)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Flight format is not valid")
 		}
-		_, er := flightService.GetFlightById(flight.ID)
+
+		_, er := cityService.GetCityById(flight.To)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("To city not found")
+		}
+		_, er = cityService.GetCityById(flight.From)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("From city not found")
+		}
+		_, er = pilotService.GetPilotById(flight.To)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("Pilot not found")
+		}
+
+		_, er = flightService.GetFlightById(flight.ID)
 		if er != nil && er.Error() == "flight not found" {
 			err = flightService.AddFlight(flight)
 			if err == nil {
@@ -84,7 +98,7 @@ func AddFlight(app *fiber.App, flightService services.FlightService) fiber.Route
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
 //	@Router			/flight [put]
-func UpdateFlight(app *fiber.App, flightService services.FlightService) fiber.Router {
+func UpdateFlight(app *fiber.App, flightService services.FlightService, cityService services.CityService, pilotService services.PilotService) fiber.Router {
 	return app.Put("/flight", func(c *fiber.Ctx) error {
 		var flight entity.Flight
 
@@ -93,7 +107,19 @@ func UpdateFlight(app *fiber.App, flightService services.FlightService) fiber.Ro
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Flight format is not valid")
 		}
-		_, er := flightService.GetFlightById(flight.ID)
+		_, er := cityService.GetCityById(flight.To)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("To city not found")
+		}
+		_, er = cityService.GetCityById(flight.From)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("From city not found")
+		}
+		_, er = pilotService.GetPilotById(flight.To)
+		if er != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("Pilot not found")
+		}
+		_, er = flightService.GetFlightById(flight.ID)
 
 		if er != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(er.Error())

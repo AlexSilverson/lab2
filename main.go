@@ -35,8 +35,8 @@ func main() {
 	controller.DeletePilot(app, pilotService)
 
 	controller.GetFlightById(app, flightService)
-	controller.AddFlight(app, flightService)
-	controller.UpdateFlight(app, flightService)
+	controller.AddFlight(app, flightService, cityServise, pilotService)
+	controller.UpdateFlight(app, flightService, cityServise, pilotService)
 	controller.DeleteFlight(app, flightService)
 	app.Listen(":3001")
 }
