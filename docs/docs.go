@@ -16,6 +16,108 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/aunt/shortflightinfo/{id}": {
+            "get": {
+                "description": "Getting Flight by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Getting Flight by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "jwt token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id of Flight",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/flight/{id}": {
+            "get": {
+                "description": "Getting Flight by Id in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flights"
+                ],
+                "summary": "Getting Flight by Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "jwt token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id of Flight",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/city": {
             "put": {
                 "description": "Updating City in detail",
@@ -212,7 +314,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Flight"
+                            "$ref": "#/definitions/dtos.AddFlightDTO"
                         }
                     }
                 ],
@@ -256,7 +358,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.Flight"
+                            "$ref": "#/definitions/dtos.AddFlightDTO"
                         }
                     }
                 ],
@@ -283,8 +385,8 @@ const docTemplate = `{
             }
         },
         "/flight/{id}": {
-            "get": {
-                "description": "Getting Flight by Id in detail",
+            "delete": {
+                "description": "Deletting Flight by Id in detail",
                 "consumes": [
                     "application/json"
                 ],
@@ -294,7 +396,7 @@ const docTemplate = `{
                 "tags": [
                     "Flights"
                 ],
-                "summary": "Getting Flight by Id",
+                "summary": "Deletting Flight by Id",
                 "parameters": [
                     {
                         "type": "string",
@@ -324,9 +426,11 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "Deletting Flight by Id in detail",
+            }
+        },
+        "/login": {
+            "get": {
+                "description": "Login User by jso in detail",
                 "consumes": [
                     "application/json"
                 ],
@@ -334,15 +438,22 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Flights"
+                    "Users"
                 ],
-                "summary": "Deletting Flight by Id",
+                "summary": "Login User by json",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id of Flight",
-                        "name": "id",
-                        "in": "path",
+                        "description": "Login",
+                        "name": "login",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -478,6 +589,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "auth token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -543,36 +661,152 @@ const docTemplate = `{
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "entity.City": {
-            "type": "object",
-            "properties": {
-                "country": {
-                    "type": "string"
-                },
-                "history": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "resort": {
-                    "type": "integer"
+        },
+        "/user": {
+            "put": {
+                "description": "Updating User Role in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Updating User Role",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Request of Updating Flight Object",
+                        "name": "id",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Add User by jso in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Add User by json",
+                "parameters": [
+                    {
+                        "description": "Request of Creating User Object",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UserDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
-        "entity.Flight": {
+        "/user/{id}": {
+            "get": {
+                "description": "Getting User by Login in detail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Getting User by Login",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of User",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dtos.AddFlightDTO": {
             "type": "object",
+            "required": [
+                "from",
+                "pilot",
+                "starttime",
+                "to",
+                "treveltime"
+            ],
             "properties": {
                 "from": {
-                    "type": "integer"
-                },
-                "id": {
                     "type": "integer"
                 },
                 "pilot": {
@@ -589,28 +823,26 @@ const docTemplate = `{
                 }
             }
         },
-        "entity.Pilot": {
+        "dtos.UserDto": {
             "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
             "properties": {
-                "age": {
-                    "type": "integer"
-                },
-                "experience": {
-                    "type": "integer"
-                },
-                "firstname": {
+                "login": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
-                "lastname": {
-                    "type": "string"
-                },
-                "secondname": {
+                "password": {
                     "type": "string"
                 }
             }
+        },
+        "entity.City": {
+            "type": "object"
+        },
+        "entity.Pilot": {
+            "type": "object"
         }
     }
 }`

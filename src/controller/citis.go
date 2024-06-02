@@ -31,7 +31,7 @@ func GetCityById(app *fiber.App, cityService services.CityService) fiber.Router 
 
 		city, er := cityService.GetCityById(uint(id))
 		if er != nil {
-			return c.Status(fiber.StatusNotFound).JSON(er)
+			return c.Status(fiber.StatusNotFound).JSON(string(er.Error()))
 		}
 
 		return c.Status(fiber.StatusOK).JSON(city)
@@ -58,22 +58,16 @@ func AddCity(app *fiber.App, cityService services.CityService) fiber.Router {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("City format is not valid")
 		}
-		_, er := cityService.GetCityById(city.ID)
-		if er != nil && er.Error() == "city not found" {
-			err = cityService.AddCity(city)
-			if err == nil {
-				return c.Status(fiber.StatusOK).JSON("added")
-			} else {
-				return c.Status(fiber.StatusBadRequest).JSON(err)
-			}
+		err = cityService.AddCity(city)
+		if err == nil {
+			return c.Status(fiber.StatusOK).JSON("added")
+		} else {
+			return c.Status(fiber.StatusBadRequest).JSON(err)
 		}
-
-		return c.Status(fiber.StatusBadRequest).JSON("That id is already used")
-
 	})
 }
 
-// GetCityById Updating City
+// Put city Updating City
 //
 //	@Summary		Updating City
 //	@Description	Updating City in detail
@@ -94,14 +88,10 @@ func UpdateCity(app *fiber.App, cityService services.CityService) fiber.Router {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("City format is not valid")
 		}
-		_, er := cityService.GetCityById(city.ID)
 
+		er := cityService.UpdateCity(city)
 		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
-		}
-		er = cityService.UpdateCity(city)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
+			return c.Status(fiber.StatusBadRequest).JSON(string(er.Error()))
 		}
 		return c.Status(fiber.StatusOK).JSON("updated")
 	})
@@ -141,7 +131,7 @@ func DeleteCity(app *fiber.App, cityService services.CityService) fiber.Router {
 
 		er := cityService.DeleteCity(uint(id))
 		if er != nil {
-			return c.Status(fiber.StatusNotFound).JSON("City not found")
+			return c.Status(fiber.StatusNotFound).JSON(string(er.Error()))
 		}
 
 		return c.Status(fiber.StatusOK).JSON("deleted")

@@ -1,22 +1,7 @@
 definitions:
-  entity.City:
-    properties:
-      country:
-        type: string
-      history:
-        type: integer
-      id:
-        type: integer
-      name:
-        type: string
-      resort:
-        type: integer
-    type: object
-  entity.Flight:
+  dtos.AddFlightDTO:
     properties:
       from:
-        type: integer
-      id:
         type: integer
       pilot:
         type: integer
@@ -26,21 +11,26 @@ definitions:
         type: integer
       treveltime:
         type: integer
+    required:
+    - from
+    - pilot
+    - starttime
+    - to
+    - treveltime
+    type: object
+  dtos.UserDto:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  entity.City:
     type: object
   entity.Pilot:
-    properties:
-      age:
-        type: integer
-      experience:
-        type: integer
-      firstname:
-        type: string
-      id:
-        type: integer
-      lastname:
-        type: string
-      secondname:
-        type: string
     type: object
 info:
   contact: {}
@@ -49,6 +39,74 @@ info:
   title: 2lab API
   version: "1.0"
 paths:
+  /aunt/shortflightinfo/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Getting Flight by Id in detail
+      parameters:
+      - description: jwt token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: id of Flight
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting Flight by Id
+      tags:
+      - Flights
+  /auth/flight/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Getting Flight by Id in detail
+      parameters:
+      - description: jwt token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: id of Flight
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting Flight by Id
+      tags:
+      - Flights
   /city:
     post:
       consumes:
@@ -176,7 +234,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.Flight'
+          $ref: '#/definitions/dtos.AddFlightDTO'
       produces:
       - application/json
       responses:
@@ -205,7 +263,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/entity.Flight'
+          $ref: '#/definitions/dtos.AddFlightDTO'
       produces:
       - application/json
       responses:
@@ -253,14 +311,20 @@ paths:
       summary: Deletting Flight by Id
       tags:
       - Flights
+  /login:
     get:
       consumes:
       - application/json
-      description: Getting Flight by Id in detail
+      description: Login User by jso in detail
       parameters:
-      - description: id of Flight
-        in: path
-        name: id
+      - description: Login
+        in: header
+        name: login
+        required: true
+        type: string
+      - description: Password
+        in: header
+        name: password
         required: true
         type: string
       produces:
@@ -278,9 +342,9 @@ paths:
           description: Not Found
           schema:
             type: string
-      summary: Getting Flight by Id
+      summary: Login User by json
       tags:
-      - Flights
+      - Users
   /pilot:
     post:
       consumes:
@@ -379,6 +443,11 @@ paths:
         name: id
         required: true
         type: string
+      - description: auth token
+        in: header
+        name: token
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -397,4 +466,91 @@ paths:
       summary: Getting Pilots by Id
       tags:
       - Pilots
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Add User by jso in detail
+      parameters:
+      - description: Request of Creating User Object
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UserDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Add User by json
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Updating User Role in detail
+      parameters:
+      - description: Request of Updating Flight Object
+        in: header
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Updating User Role
+      tags:
+      - Users
+  /user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Getting User by Login in detail
+      parameters:
+      - description: id of User
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Getting User by Login
+      tags:
+      - Users
 swagger: "2.0"

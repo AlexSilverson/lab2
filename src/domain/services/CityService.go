@@ -2,14 +2,12 @@ package services
 
 import (
 	"AlexSilverson/lab2/src/domain/entity"
-	"bufio"
-	"encoding/json"
-	"errors"
-	"os"
+
+	"gorm.io/gorm"
 )
 
 type cityService struct {
-	fileRoute string
+	db *gorm.DB
 }
 
 type CityService interface {
@@ -21,137 +19,37 @@ type CityService interface {
 
 func (r cityService) GetCityById(id uint) (*entity.City, error) {
 	var city entity.City
-
-	f, er := os.Open(r.fileRoute)
-
-	if er != nil {
-		return &city, er
+	erdb := r.db.First(&city, id)
+	if erdb.Error != nil {
+		return &city, erdb.Error
 	}
-
-	defer f.Close()
-
-	decoder := json.NewDecoder(f)
-
-	for decoder.More() {
-		er = decoder.Decode(&city)
-		if er != nil {
-			return &city, er
-		}
-		if city.ID == id {
-			return &city, nil
-		}
-	}
-	return &city, errors.New("city not found")
+	return &city, nil
 }
 
 func (r cityService) AddCity(city entity.City) error {
-	f, er := os.OpenFile(r.fileRoute, os.O_WRONLY|os.O_APPEND, 0644)
-
-	if er != nil {
-		return er
-	}
-
-	defer f.Close()
-
-	w := bufio.NewWriter(f)
-
-	data, er := json.Marshal(city)
-
-	if er != nil {
-		return er
-	}
-
-	_, err := w.Write(data)
-
-	if err != nil {
-		return er
-	}
-	er = w.Flush()
-	if er != nil {
-		return er
+	erdb := r.db.Create(&city)
+	if erdb.Error != nil {
+		return erdb.Error
 	}
 	return nil
 }
 
 func (r cityService) UpdateCity(inputCity entity.City) error {
-	f, er := os.OpenFile(r.fileRoute, os.O_APPEND|os.O_RDWR, 0644)
-
-	if er != nil {
-		return er
+	erdb := r.db.Save(&inputCity)
+	if erdb.Error != nil {
+		return erdb.Error
 	}
-
-	defer f.Close()
-
-	citis := make([]entity.City, 0)
-
-	decoder := json.NewDecoder(f)
-
-	for decoder.More() {
-		var now entity.City
-		er = decoder.Decode(&now)
-		if er != nil {
-			return er
-		}
-		citis = append(citis, now)
-	}
-
-	er = os.Truncate(r.fileRoute, 0)
-	if er != nil {
-		return er
-	}
-	var flag bool = false
-	for _, curCity := range citis {
-		if curCity.ID == inputCity.ID {
-			flag = true
-			r.AddCity(inputCity)
-
-		} else {
-			r.AddCity(curCity)
-		}
-	}
-
-	if flag {
-		return nil
-	} else {
-		return errors.New("that city not found")
-	}
+	return nil
 }
 
 func (r cityService) DeleteCity(id uint) error {
-	f, er := os.OpenFile(r.fileRoute, os.O_APPEND|os.O_RDWR, 0644)
-
-	if er != nil {
-		return er
-	}
-
-	defer f.Close()
-
-	citis := make([]entity.City, 0)
-
-	decoder := json.NewDecoder(f)
-
-	for decoder.More() {
-		var now entity.City
-		er = decoder.Decode(&now)
-		if er != nil {
-			return (er)
-		}
-		citis = append(citis, now)
-	}
-
-	er = os.Truncate(r.fileRoute, 0)
-	if er != nil {
-		return er
-	}
-	for _, curCity := range citis {
-		if curCity.ID != id {
-			r.AddCity(curCity)
-		}
+	erdb := r.db.Delete(&entity.City{}, id)
+	if erdb.Error != nil {
+		return erdb.Error
 	}
 	return nil
-
 }
 
-func NewCitySevice(fileRoute string) CityService {
-	return &cityService{fileRoute: fileRoute}
+func NewCitySevice(db *gorm.DB) CityService {
+	return &cityService{db: db}
 }

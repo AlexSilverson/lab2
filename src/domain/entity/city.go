@@ -1,9 +1,12 @@
 package entity
 
+import "gorm.io/gorm"
+
 type City struct {
-	ID      uint   `json:"id"`
-	Name    string `json:"name"`
-	Country string `json:"country"`
-	History uint   `json:"history"`
-	Resort  uint   `json:"resort"`
+	gorm.Model
+	ID      uint   `json:"id" gorm:"primary_key;autoIncrement:true" validate:"required"`
+	Name    string `json:"name" validate:"required" `
+	Country string `json:"country" validate:"required"`
+	History uint   `json:"history" validate:"required" `
+	Resort  uint   `json:"resort" validate:"required" `
 }

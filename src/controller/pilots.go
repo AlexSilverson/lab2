@@ -3,6 +3,7 @@ package controller
 import (
 	"AlexSilverson/lab2/src/domain/entity"
 	"AlexSilverson/lab2/src/domain/services"
+	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,6 +17,7 @@ import (
 //	@Accept			json
 //	@Produce		json
 //	@Param			id				path		string	true	"id of Pilot"
+//	@Param			token			header		string	true	"auth token"
 //	@Failure		400				{string}	string
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
@@ -24,14 +26,14 @@ func GetPilotById(app *fiber.App, pilotService services.PilotService) fiber.Rout
 	return app.Get("/pilot/:id", func(c *fiber.Ctx) error {
 		pilotId := c.Params("id")
 		id, err := strconv.ParseInt(pilotId, 10, 64)
-
+		fmt.Println("here ", c.Get("token"))
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Id format is not valid")
 		}
 
 		pilot, er := pilotService.GetPilotById(uint(id))
 		if er != nil {
-			return c.Status(fiber.StatusNotFound).JSON(er)
+			return c.Status(fiber.StatusNotFound).JSON(string(er.Error()))
 		}
 
 		return c.Status(fiber.StatusOK).JSON(pilot)
@@ -57,17 +59,12 @@ func AddPilot(app *fiber.App, pilotService services.PilotService) fiber.Router {
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Pilot format is not valid")
 		}
-		_, er := pilotService.GetPilotById(pilot.ID)
-		if er != nil && er.Error() == "pilot not found" {
-			err = pilotService.AddPilot(pilot)
-			if err == nil {
-				return c.Status(fiber.StatusOK).JSON("added")
-			} else {
-				return c.Status(fiber.StatusBadRequest).JSON(err)
-			}
+		err = pilotService.AddPilot(pilot)
+		if err == nil {
+			return c.Status(fiber.StatusOK).JSON("added")
+		} else {
+			return c.Status(fiber.StatusBadRequest).JSON(err)
 		}
-
-		return c.Status(fiber.StatusBadRequest).JSON("That id is already used")
 
 	})
 }
@@ -93,12 +90,8 @@ func UpdatePilot(app *fiber.App, pilotService services.PilotService) fiber.Route
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Pilot format is not valid")
 		}
-		_, er := pilotService.GetPilotById(pilot.ID)
 
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
-		}
-		er = pilotService.UpdatePilot(pilot)
+		er := pilotService.UpdatePilot(pilot)
 		if er != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
 		}
@@ -130,7 +123,7 @@ func DeletePilot(app *fiber.App, pilotService services.PilotService) fiber.Route
 
 		er := pilotService.DeletePilot(uint(id))
 		if er != nil {
-			return c.Status(fiber.StatusNotFound).JSON("Pilot not found")
+			return c.Status(fiber.StatusNotFound).JSON(string(er.Error()))
 		}
 
 		return c.Status(fiber.StatusOK).JSON("deleted")

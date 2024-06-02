@@ -1,7 +1,10 @@
 package entity
 
+import "gorm.io/gorm"
+
 type Pilot struct {
-	ID         uint   `json:"id"`
+	gorm.Model
+	ID         uint   `json:"id" gorm:"primary_key;autoIncrement:true"`
 	FirstName  string `json:"firstname"`
 	SecondName string `json:"secondname"`
 	LastName   string `json:"lastname"`

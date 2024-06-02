@@ -2,14 +2,12 @@ package services
 
 import (
 	"AlexSilverson/lab2/src/domain/entity"
-	"bufio"
-	"encoding/json"
-	"errors"
-	"os"
+
+	"gorm.io/gorm"
 )
 
 type flightService struct {
-	fileRoute string
+	db *gorm.DB
 }
 
 type FlightService interface {
@@ -19,138 +17,51 @@ type FlightService interface {
 	DeleteFlight(id uint) error
 }
 
-func NewFlightSevice(fileRoute string) FlightService {
-	return &flightService{fileRoute: fileRoute}
+func NewFlightSevice(db *gorm.DB) FlightService {
+	return &flightService{db: db}
 }
 
 func (r flightService) GetFlightById(id uint) (*entity.Flight, error) {
 	var flight entity.Flight
-
-	f, er := os.Open(r.fileRoute)
-
-	if er != nil {
-		return &flight, er
+	erdb := r.db.First(&flight, id)
+	if erdb.Error != nil {
+		return &flight, erdb.Error
 	}
-
-	defer f.Close()
-
-	decoder := json.NewDecoder(f)
-
-	for decoder.More() {
-		er = decoder.Decode(&flight)
-		if er != nil {
-			return &flight, er
-		}
-		if flight.ID == id {
-			return &flight, nil
-		}
+	erdb = r.db.First(&flight.To, flight.ToId)
+	if erdb.Error != nil {
+		return &flight, erdb.Error
 	}
-	return &flight, errors.New("flight not found")
+	erdb = r.db.First(&flight.From, flight.FromId)
+	if erdb.Error != nil {
+		return &flight, erdb.Error
+	}
+	erdb = r.db.First(&flight.Pilot, flight.PilotId)
+	if erdb.Error != nil {
+		return &flight, erdb.Error
+	}
+	return &flight, nil
 }
 
 func (r flightService) AddFlight(flight entity.Flight) error {
-	f, er := os.OpenFile(r.fileRoute, os.O_WRONLY|os.O_APPEND, 0644)
-
-	if er != nil {
-		return er
-	}
-
-	defer f.Close()
-
-	w := bufio.NewWriter(f)
-
-	data, er := json.Marshal(flight)
-
-	if er != nil {
-		return er
-	}
-
-	_, err := w.Write(data)
-
-	if err != nil {
-		return er
-	}
-	er = w.Flush()
-	if er != nil {
-		return er
+	erdb := r.db.Create(&flight)
+	if erdb.Error != nil {
+		return erdb.Error
 	}
 	return nil
 }
 
 func (r flightService) UpdateFlight(inputFlight entity.Flight) error {
-	f, er := os.OpenFile(r.fileRoute, os.O_APPEND|os.O_RDWR, 0644)
-
-	if er != nil {
-		return er
+	erdb := r.db.Save(&inputFlight)
+	if erdb.Error != nil {
+		return erdb.Error
 	}
-
-	defer f.Close()
-
-	flights := make([]entity.Flight, 0)
-
-	decoder := json.NewDecoder(f)
-
-	for decoder.More() {
-		var now entity.Flight
-		er = decoder.Decode(&now)
-		if er != nil {
-			return er
-		}
-		flights = append(flights, now)
-	}
-
-	er = os.Truncate(r.fileRoute, 0)
-	if er != nil {
-		return er
-	}
-	var flag bool = false
-	for _, curFlight := range flights {
-		if curFlight.ID == inputFlight.ID {
-			flag = true
-			r.AddFlight(inputFlight)
-
-		} else {
-			r.AddFlight(curFlight)
-		}
-	}
-
-	if flag {
-		return nil
-	} else {
-		return errors.New("that flight not found")
-	}
+	return nil
 }
 
 func (r flightService) DeleteFlight(id uint) error {
-	f, er := os.OpenFile(r.fileRoute, os.O_APPEND|os.O_RDWR, 0644)
-
-	if er != nil {
-		return er
-	}
-
-	defer f.Close()
-
-	flights := make([]entity.Flight, 0)
-
-	decoder := json.NewDecoder(f)
-
-	for decoder.More() {
-		var now entity.Flight
-		er = decoder.Decode(&now)
-		if er != nil {
-			return (er)
-		}
-		flights = append(flights, now)
-	}
-
-	er = os.Truncate(r.fileRoute, 0)
-	if er != nil {
-		return er
-	}
-	for _, curFlight := range flights {
-		if curFlight.ID != id {
-			r.AddFlight(curFlight)
-		}
+	erdb := r.db.Delete(&entity.Flight{}, id)
+	if erdb.Error != nil {
+		return erdb.Error
 	}
 	return nil
 

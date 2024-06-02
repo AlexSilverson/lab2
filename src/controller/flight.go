@@ -2,6 +2,7 @@ package controller
 
 import (
 	"AlexSilverson/lab2/src/domain/entity"
+	"AlexSilverson/lab2/src/domain/entity/dtos"
 	"AlexSilverson/lab2/src/domain/services"
 	"strconv"
 
@@ -15,13 +16,14 @@ import (
 //	@Tags			Flights
 //	@Accept			json
 //	@Produce		json
+//	@Param			token			header		string	true	"jwt token"
 //	@Param			id				path		string	true	"id of Flight"
 //	@Failure		400				{string}	string
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
-//	@Router			/flight/{id} [get]
+//	@Router			/auth/flight/{id} [get]
 func GetFlightById(app *fiber.App, flightService services.FlightService) fiber.Router {
-	return app.Get("/flight/:id", func(c *fiber.Ctx) error {
+	return app.Get("/auth/flight/:id", func(c *fiber.Ctx) error {
 		flightId := c.Params("id")
 		id, err := strconv.ParseInt(flightId, 10, 64)
 
@@ -38,6 +40,38 @@ func GetFlightById(app *fiber.App, flightService services.FlightService) fiber.R
 	})
 }
 
+// GetFlightById Getting short info about Flight by ID
+//
+//	@Summary		Getting Flight by Id
+//	@Description	Getting Flight by Id in detail
+//	@Tags			Flights
+//	@Accept			json
+//	@Produce		json
+//	@Param			token			header		string	true	"jwt token"
+//	@Param			id				path		string	true	"id of Flight"
+//	@Failure		400				{string}	string
+//	@Failure		404				{string}	string
+//	@Success		200				{string}	string
+//	@Router			/aunt/shortflightinfo/{id} [get]
+func GetShortFlightById(app *fiber.App, flightService services.FlightService) fiber.Router {
+	return app.Get("/aunt/shortflightinfo/:id", func(c *fiber.Ctx) error {
+		flightId := c.Params("id")
+		id, err := strconv.ParseInt(flightId, 10, 64)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON("Id format is not valid")
+		}
+
+		flight, er := flightService.GetFlightById(uint(id))
+		dto := dtos.MapToFlightInfoDto(*flight)
+		if er != nil {
+			return c.Status(fiber.StatusNotFound).JSON(er)
+		}
+
+		return c.Status(fiber.StatusOK).JSON(dto)
+	})
+}
+
 // PutFlightById Getting Flight by json
 //
 //	@Summary		Getting Flight by Id
@@ -45,43 +79,29 @@ func GetFlightById(app *fiber.App, flightService services.FlightService) fiber.R
 //	@Tags			Flights
 //	@Accept			json
 //	@Produce		json
-//	@Param			request			body		entity.Flight	true	"Request of Creating Flight Object"
+//	@Param			request			body		dtos.AddFlightDTO	true	"Request of Creating Flight Object"
 //	@Failure		400				{string}	string
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
 //	@Router			/flight [post]
 func AddFlight(app *fiber.App, flightService services.FlightService, cityService services.CityService, pilotService services.PilotService) fiber.Router {
 	return app.Post("/flight", func(c *fiber.Ctx) error {
+		var flightdto dtos.AddFlightDTO
 		var flight entity.Flight
-		err := c.BodyParser(&flight)
+		err := c.BodyParser(&flightdto)
+		//fmt.Println(flightdto)
+		flight = flightdto.MapAddFlightDtoToFlight()
+		//fmt.Println(flight)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Flight format is not valid")
 		}
 
-		_, er := cityService.GetCityById(flight.To)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("To city not found")
+		err = flightService.AddFlight(flight)
+		if err == nil {
+			return c.Status(fiber.StatusOK).JSON("added")
+		} else {
+			return c.Status(fiber.StatusBadRequest).JSON(err)
 		}
-		_, er = cityService.GetCityById(flight.From)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("From city not found")
-		}
-		_, er = pilotService.GetPilotById(flight.To)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("Pilot not found")
-		}
-
-		_, er = flightService.GetFlightById(flight.ID)
-		if er != nil && er.Error() == "flight not found" {
-			err = flightService.AddFlight(flight)
-			if err == nil {
-				return c.Status(fiber.StatusOK).JSON("added")
-			} else {
-				return c.Status(fiber.StatusBadRequest).JSON(err)
-			}
-		}
-
-		return c.Status(fiber.StatusBadRequest).JSON("That id is already used")
 
 	})
 }
@@ -93,38 +113,23 @@ func AddFlight(app *fiber.App, flightService services.FlightService, cityService
 //	@Tags			Flights
 //	@Accept			json
 //	@Produce		json
-//	@Param			request			body		entity.Flight	true	"Request of Updating Flight Object"
+//	@Param			request			body		dtos.AddFlightDTO	true	"Request of Updating Flight Object"
 //	@Failure		400				{string}	string
 //	@Failure		404				{string}	string
 //	@Success		200				{string}	string
 //	@Router			/flight [put]
 func UpdateFlight(app *fiber.App, flightService services.FlightService, cityService services.CityService, pilotService services.PilotService) fiber.Router {
 	return app.Put("/flight", func(c *fiber.Ctx) error {
+		var flightdto dtos.AddFlightDTO
 		var flight entity.Flight
 
-		err := c.BodyParser(&flight)
-
+		err := c.BodyParser(&flightdto)
+		flight = flightdto.MapAddFlightDtoToFlight()
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON("Flight format is not valid")
 		}
-		_, er := cityService.GetCityById(flight.To)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("To city not found")
-		}
-		_, er = cityService.GetCityById(flight.From)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("From city not found")
-		}
-		_, er = pilotService.GetPilotById(flight.To)
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON("Pilot not found")
-		}
-		_, er = flightService.GetFlightById(flight.ID)
 
-		if er != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
-		}
-		er = flightService.UpdateFlight(flight)
+		er := flightService.UpdateFlight(flight)
 		if er != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(er.Error())
 		}
